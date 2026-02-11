@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Valentine Chocolate</title>
+
+    <!-- Favicon Love (gunakan file png/ico) -->
+    <link rel="icon" href="favicon-heart.png" type="image/png" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              romantic: ['"Great Vibes"', 'cursive'],
+              modern: ['Poppins', 'system-ui']
+            },
+            colors: {
+              choco1: '#8a5538',
+              choco2: '#4b2616'
+            },
+            keyframes: {
+              float: {
+                '0%,100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' }
+              },
+              melt: {
+                '0%,100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' }
+              },
+              shine: {
+                '0%': { left: '-60%', opacity: '0' },
+                '20%': { opacity: '.8' },
+                '50%,100%': { left: '120%', opacity: '0' }
+              }
+            },
+            animation: {
+              float: 'float 5s ease-in-out infinite',
+              melt: 'melt 3s ease-in-out infinite',
+              shine: 'shine 5s ease-in-out infinite'
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Great+Vibes&family=Allura&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  </head>
+
+  <body
+    class="min-h-screen overflow-hidden font-modern bg-gradient-to-b from-[#2b0b00] via-[#3b1a0d] to-[#7a3a28]"
+  >
+    <!-- Credit -->
+    <div class="absolute top-4 right-4 text-pink-200 text-sm opacity-70">
+      made by
+      <a
+        href="https://www.instagram.com/ibrahim.ahmad.falathin"
+        target="_blank"
+        class="font-semibold hover:underline"
+      >
+        @i.a.falathin
+      </a>
+    </div>
+
+    <!-- Final Text -->
+    <div
+      id="valentineText"
+      class="pointer-events-none fixed inset-0 flex flex-col items-center justify-center gap-6 text-pink-300 font-romantic text-[clamp(2.5rem,6vw,4.5rem)] opacity-0 scale-90 transition-all duration-[1200ms]"
+    >
+      <div class="flex items-center gap-4 drop-shadow-2xl">
+        <span>Happy Valentine</span>
+        <i class="fa-solid fa-heart text-pink-400 animate-pulse text-4xl"></i>
+      </div>
+
+      <div class="text-lg font-modern tracking-widest text-pink-200 opacity-80">
+        with sweet chocolate 🍫
+      </div>
+    </div>
+
+    <!-- Chocolate -->
+    <div class="min-h-screen flex items-center justify-center">
+      <div id="wrapper" class="transition-all duration-1000">
+        <div
+          id="bar"
+          class="grid grid-cols-3 grid-rows-2 gap-3 p-4 w-[min(90vw,340px)] aspect-[16/9] rounded-3xl bg-gradient-to-b from-[#5b331f] to-[#2e1408] shadow-[0_30px_60px_rgba(0,0,0,.8),inset_0_6px_16px_rgba(255,255,255,.05)] animate-float"
+        >
+          <!-- template -->
+          <template id="chocoTemplate">
+            <div
+              class="choco relative overflow-hidden rounded-2xl cursor-pointer bg-gradient-to-br from-choco1 to-choco2 shadow-[inset_0_6px_10px_rgba(255,255,255,.08),inset_0_-6px_12px_rgba(0,0,0,.5)] animate-melt transition-all duration-300 hover:scale-105"
+            >
+              <div
+                class="absolute -top-[40%] -left-[60%] w-[40%] h-[180%] bg-gradient-to-r from-transparent via-white/40 to-transparent rotate-[20deg] animate-shine"
+              ></div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const bar = document.getElementById('bar')
+      const wrapper = document.getElementById('wrapper')
+      const text = document.getElementById('valentineText')
+      const template = document.getElementById('chocoTemplate')
+
+      let eaten = 0
+      let finished = false
+
+      // generate chocolates
+      for (let i = 0; i < 6; i++) {
+        bar.appendChild(template.content.cloneNode(true))
+      }
+
+      const chocos = document.querySelectorAll('.choco')
+
+      chocos.forEach(c => {
+        c.addEventListener('click', e => {
+          e.stopPropagation()
+          if (c.classList.contains('scale-0') || finished) return
+
+          c.classList.add('scale-0', 'opacity-0', 'pointer-events-none')
+          eaten++
+
+          confetti({
+            particleCount: 12,
+            spread: 35,
+            colors: ['#8a5538', '#4b2616'],
+            origin: { y: 0.6 }
+          })
+
+          if (eaten === chocos.length) {
+            wrapper.addEventListener('click', eatAll)
+          }
+        })
+      })
+
+      function eatAll() {
+        if (finished) return
+        finished = true
+
+        wrapper.classList.add('scale-0', 'opacity-0', 'pointer-events-none')
+
+        confetti({
+          particleCount: 150,
+          spread: 110,
+          colors: ['#ff9ab6', '#ffffff', '#8a5538'],
+          origin: { y: 0.5 }
+        })
+
+        setTimeout(() => {
+          text.classList.remove('opacity-0', 'scale-90')
+          text.classList.add('opacity-100', 'scale-100')
+        }, 500)
+      }
+    </script>
+  </body>
+</html>
